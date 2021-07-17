@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:project/cartpage.dart';
-import 'package:project/searchpage.dart';
+import 'package:project/pulsespage.dart';
+import 'package:project/f&vpage.dart';
 import 'constants.dart';
 import 'package:badges/badges.dart';
 
@@ -62,7 +62,6 @@ class customactionBar extends StatelessWidget {
             Container(
                 width: 42.0,
                 height: 42.0,
-
                 decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(8.0)
@@ -105,3 +104,39 @@ class customactionBar extends StatelessWidget {
     );
   }
   }
+
+
+  Widget appBars(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        style: TextStyle(fontSize: 22),
+        children: <TextSpan>[
+          TextSpan(text: 'Agro',
+              style: TextStyle(
+                  fontWeight: FontWeight.w600, color: Colors.black)),
+          TextSpan(text: ' - ',
+              style: TextStyle(
+                  fontWeight: FontWeight.w600, color: Colors.black)),
+          TextSpan(text: 'Kart',
+              style: TextStyle(
+                  fontWeight: FontWeight.w600, color: Colors.pink)),
+          //TextSpan(text: '\n E', style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black)),
+        ],
+      ),
+
+    );
+  }
+
+
+Widget Cart(BuildContext context){
+  return RichText(
+    text: TextSpan(
+      style: TextStyle(fontSize: 22) ,
+      children: <TextSpan>[
+        TextSpan(text: 'Cart', style: TextStyle(fontWeight: FontWeight.w600,color: Colors.black)),
+        TextSpan(text: ' Page', style: TextStyle(fontWeight: FontWeight.w600,color: Colors.blue)),
+
+      ],
+    ),
+  );
+}

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:project/constants.dart';
 
+import 'Main Page.dart';
+
 /// This Widget is the main application widget.
 class Tables extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Tutorials',
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.green,
           title: Center(
             child: Text('Price Table',
               style: Constants.boldHeading,
@@ -17,7 +20,12 @@ class Tables extends StatelessWidget {
 
             ),
           ),
-
+leading: IconButton(
+  icon: Icon(Icons.arrow_back),
+  onPressed: (){ Navigator.push(context, MaterialPageRoute(
+    builder:(context)=> MainPage(),
+  )); },
+),
 
         ),
         body: Table(),
@@ -76,8 +84,36 @@ class Table extends StatelessWidget {
           ),
           DataRow(
             cells: <DataCell>[
-              DataCell(Text('Sugar',style: Constants.regularDarkText,)),
+              DataCell(Text('Fruits',style: Constants.regularDarkText,)),
               DataCell(Text('1 Kg')),
+              DataCell(Text('\$40')),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              DataCell(Text('cereals',style: Constants.regularDarkText,)),
+              DataCell(Text('1 Kg')),
+              DataCell(Text('\$130')),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              DataCell(Text('Grains',style: Constants.regularDarkText,)),
+              DataCell(Text('1 Kg')),
+              DataCell(Text('\$90')),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              DataCell(Text('Pulses',style: Constants.regularDarkText,)),
+              DataCell(Text('1 Kg')),
+              DataCell(Text('\$120')),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              DataCell(Text('Oil',style: Constants.regularDarkText,)),
+              DataCell(Text('1 L')),
               DataCell(Text('\$40')),
             ],
           ),

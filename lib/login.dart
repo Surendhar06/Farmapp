@@ -1,103 +1,111 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'RoundedButton.dart';
+import 'package:project/RoundedButton.dart';
+import 'package:project/register.dart';
+import 'Main Page.dart';
+import 'authentication.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'home.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 
-class Login extends StatefulWidget {
+
+class login extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _loginState createState() => _loginState();
 }
 
-class _LoginState extends State<Login> {
-
-  String email;
-  String password;
-  final _auth = FirebaseAuth.instance;
-  // ignore: deprecated_member_use
-  FirebaseUser user;
-  bool showSpinner = false;
+class _loginState extends State<login> {
+  bool _validate = false;
+  String emailIn;
+  String passwordIn;
+  final _auth = authentication();
 
   @override
   Widget build(BuildContext context) {
+    return SafeArea(
+      child: Expanded(
+        child: Scaffold(
+          body: ListView(
 
-    return Scaffold(
-
-      body: ModalProgressHUD(
-        inAsyncCall: showSpinner,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Hero(
-                tag: 'logo',
-                child: Image.network(
-                  "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fcdn.onlinewebfonts.com%2Fsvg%2Fimg_366353.png&f=1&nofb=1",
-                  height: 70.0,
-                ),
+            children: [
+              SizedBox(height: 40,),
+              Text(
+                'Welcome Dude \n Login to your Account',
+                style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
               SizedBox(
-                height: 20.0,
+                height:150.0,
               ),
               TextField(
+                maxLengthEnforced: false,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: "E-mail",
+                  labelText: 'E-mail',
+                  errorText: _validate ? 'Value Can\'t Be Empty' : null,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0)),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide(color: Colors.lightBlueAccent),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                onChanged: (value) {
-                  email = value;
+                onChanged: (value){
+                  emailIn =value;
                 },
               ),
               SizedBox(
-                height: 20.0,
+                height: 40.0,
               ),
               TextField(
+                maxLengthEnforced: false,
                 obscureText: true,
                 decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide: BorderSide(color: Colors.lightBlueAccent))),
-                onChanged: (value) {
-                  password = value;
-                },
+                  labelText: 'Password',
+                  errorText: _validate ? 'Value Can\'t Be Empty' : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                  onChanged: (value){
+                  passwordIn = value;
+  },
               ),
               SizedBox(
-                height: 20.0,
+                height: 50.0,
               ),
-              RoundedButtons(
-                  colour: Colors.redAccent,
-                  title: 'Login',
-                  textcolour: Colors.white,
-                  onpressed: () async {
-                    setState(() {
-                      showSpinner = true;
-                    });
-                    try {
-                      final user = await _auth.signInWithEmailAndPassword(
-                          email: email, password: password);
-                      if (user != null) {
-                        Navigator.pushNamed(context, '/home');
-                      }
-                      setState(() {
-                        showSpinner = false;
-                      });
-                    } catch (e) {
-                      // print(e);
-                    }
-                  }),
-
+              Roundedbuttons(
+                colors: Colors.redAccent,
+                onpressed: () async{
+               dynamic result = await _auth.Signin(emailIn, passwordIn);
+               if(result == null){
+                 print('error Signin');
+  }
+               else{
+                 Navigator.push(context, MaterialPageRoute(
+                   builder:(context)=> MainPage(),
+                 ));
+  }
+                },
+                textcolor: Colors.white,
+                text: 'Log in',
+              ),
+              //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>   Rounded button here
+              SizedBox(height: 50,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('New here?'),
+                  GestureDetector(
+                    child: Text(
+                      'Click here to signup',
+                      style: TextStyle(
+                        color: Colors.lightBlue,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder:(context)=> registerpage(),
+                      ));
+                    },
+                  )
+                ],
+              )
             ],
           ),
         ),

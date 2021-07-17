@@ -1,5 +1,5 @@
 import 'constants.dart';
-import 'package:project/ProductPage.dart';
+
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatefulWidget {
@@ -19,9 +19,7 @@ class _ProductCardState extends State<ProductCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(
-          builder: (context) => Productpage(productId: widget.productId,),
-        ));
+
       },
       child: Container(
         decoration: BoxDecoration(

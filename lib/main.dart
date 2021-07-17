@@ -1,21 +1,49 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'lodingpage.dart';
-void main(){
-  runApp(MyApp());
+import 'dart:async';
+
+import 'package:animated_text_kit/animated_text_kit.dart';
+void main() {
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+
+    home: MyApp(),
+  ));
 }
-class MyApp extends StatelessWidget {
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Timer (Duration(seconds: 4),()=>
+        Navigator.push(context, MaterialPageRoute(
+          builder:(context)=> Landingpage(),
+        ),)
+       );
+  }
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-      textTheme:GoogleFonts.poppinsTextTheme(
-        Theme.of(context).textTheme,
+    return Scaffold(
+      backgroundColor: Colors.black,
+    body: WavyAnimatedTextKit(
+
+      textStyle: TextStyle(
+        color: Colors.white,
+          fontSize: 50.0,
+          fontWeight: FontWeight.bold
       ),
-      ),
-      home: Landingpage(),
+      text: [
+        "Breaking Code",
+
+      ],
+      isRepeatingAnimation: true
+    )
     );
   }
 }
-
