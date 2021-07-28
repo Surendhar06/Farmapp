@@ -14,7 +14,7 @@ class ProductServices {
 
   Future<void> upLoadProduct(
       {String productName,
-
+List image,
         String category,
         String Description,
         String photo,
@@ -31,7 +31,7 @@ class ProductServices {
       'Price':price,
       'Quantity':quantity,
       'Description':Description,
-      'image':photo,
+      'image':image,
 
     });
   }
@@ -88,6 +88,38 @@ class Buynow {
 
       'City & State':city,
       'Address':Address,
+
+    });
+  }
+}
+
+
+class sellServices {
+
+  // String ref = "productName";
+  final User _user = FirebaseAuth.instance.currentUser;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> upLoadProduct(
+      {String productName,
+
+        String category,
+        String Description,
+        String photo,
+        List quantity,
+        double price,
+      }) async {
+    var id = new Uuid();
+
+    String productId = id.v1();
+    _firestore.collection("users").document(_user.uid).collection("sell").doc(productId).set({
+      'category': category,
+      'Name': productName,
+      'id': productId,
+      'Price':price,
+      'Quantity':quantity,
+      'Description':Description,
+      'image':photo,
 
     });
   }

@@ -1,29 +1,41 @@
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/rendering.dart';
-import 'package:project/Main%20Page.dart';
 
-import 'admin product.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:toast/toast.dart';
-import 'package:path/path.dart' as Path;
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:toast/toast.dart';
+import 'package:uuid/uuid.dart';
+
+import '../admin product.dart';
+import '../firebaseservices.dart';
 
 
-class AddProduct extends StatefulWidget {
+class Adds extends StatefulWidget {
   @override
-  _AddProductState createState() => _AddProductState();
+  _AddsState createState() => _AddsState();
 }
 
-class _AddProductState extends State<AddProduct> {
+class _AddsState extends State<Adds> {
+
+
+
+
+
   ProductServices productServices = ProductServices();
+
+
+  File _image;
+  final picker = ImagePicker();
+
 
   TextEditingController productnamecontroller = TextEditingController();
   TextEditingController quantitycontroller = TextEditingController();
   TextEditingController Pricecontroller = TextEditingController();
   TextEditingController photourls = TextEditingController();
-
 
 
   GlobalKey<FormState> _fromkey = GlobalKey<FormState>();
@@ -37,9 +49,9 @@ class _AddProductState extends State<AddProduct> {
   File _image3;
   bool isLoading = false;
 
-  var  selectedType;
+  var selectedType;
   List<String> _accountType = <String>[
-    'Rice','Wheat',
+    'Rice', 'Wheat',
     'Grains',
     'Cereals',
     'Fruits&Vegetables',
@@ -49,17 +61,16 @@ class _AddProductState extends State<AddProduct> {
   ];
 
 
-
-
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
         appBar: AppBar(
           elevation: 0.1,
           backgroundColor: Colors.green,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back,color: Colors.black,),
-            onPressed: (){
+            icon: Icon(Icons.arrow_back, color: Colors.black,),
+            onPressed: () {
               Navigator.pop(context);
             },
           ),
@@ -73,7 +84,7 @@ class _AddProductState extends State<AddProduct> {
           key: _fromkey,
           child: ListView(
             children: <Widget>[
-              isLoading? CircularProgressIndicator :
+              isLoading ? CircularProgressIndicator :
               Row(
                 children: <Widget>[
                   Expanded(
@@ -185,13 +196,14 @@ class _AddProductState extends State<AddProduct> {
                 padding: EdgeInsets.all(12.0),
                 child: DropdownButton(
                   items: _accountType
-                      .map((value) => DropdownMenuItem(
-                    child: Text(
-                      value,
-                      style: TextStyle(color: Color(0xff11b719)),
-                    ),
-                    value: value,
-                  ))
+                      .map((value) =>
+                      DropdownMenuItem(
+                        child: Text(
+                          value,
+                          style: TextStyle(color: Color(0xff11b719)),
+                        ),
+                        value: value,
+                      ))
                       .toList(),
                   onChanged: (selectedAccountType) {
                     print('$selectedAccountType');
@@ -287,7 +299,7 @@ class _AddProductState extends State<AddProduct> {
                   ],
                 ),
               ),
-              
+
               Container(
                 padding: EdgeInsets.all(10.0),
                 child: Row(
@@ -359,25 +371,14 @@ class _AddProductState extends State<AddProduct> {
                   textColor: Colors.white,
                   child: Text('Add product'),
                   onPressed: () async {
+                    validateAndUpload();
 
 
-                    productServices.upLoadProduct(
-                      productName: productnamecontroller.text,
-                      price: double.parse(Pricecontroller.text),
-                      quantity: selectedSize,
-                      category:selectedType,
-                     photo:photourls.text,
-
-                      Description: quantitycontroller.text,
-                    );
                     _fromkey.currentState.reset();
                     setState(() {
                       isLoading = false;
                     });
                     Toast.show('product added', context);
-                    Navigator.push(context, MaterialPageRoute(
-                      builder:(context)=> MainPage(),
-                    ));
                   }
               ),
               // select category
@@ -465,105 +466,68 @@ class _AddProductState extends State<AddProduct> {
   }
 
 
-/*  void ValidateAndUpload() async {
-  if (_fromkey.currentState.validate()) {
-  setState(() {
-  isLoading = true;
-  });
-  if (_image1 != null && _image2 != null && _image3 != null) {
-  if (selectedSize.isNotEmpty) {
-  String imgUrl1;
-  String imgUrl2;
-  String imgUrl3;
+  Future validateAndUpload() async {
 
-  firebase_storage.FirebaseStorage task =
-  firebase_storage.FirebaseStorage.instance;
-  firebase_storage.UploadTask task1 = firebase_storage.FirebaseStorage.instance
-      .ref("1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg")
-      .putFile(_image1);
-  firebase_storage.UploadTask task2 = firebase_storage.FirebaseStorage.instance
-      .ref("1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg")
-      .putFile(_image2);
-  firebase_storage.UploadTask task3 = firebase_storage.FirebaseStorage.instance
-      .ref("1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg")
-      .putFile(_image3);
+    String imageUrl1;
+   String imageUrl2;
+    String imageUrl3;
+    CollectionReference imgColRef;
 
-  task.snapshotEvents.listen((firebase_storage.TaskSnapshot snapshot) {
-  print('Task state: ${snapshot.state}');
-  print(
-  'Progress: ${(snapshot.totalBytes / snapshot.bytesTransferred) * 100} %');
-  }
-
-  TaskSnapshot snapshot1 =
-  await task1.onComplete.then((snapshot) => snapshot);
-  TaskSnapshot snapshot2 =
-  await task2.onComplete.then((snapshot) => snapshot);
-
-  task3.onComplete.then((snapshot3) async {
-  imgUrl1 = await snapshot1.ref.getDownloadURL();
-  imgUrl2 = await snapshot2.ref.getDownloadURL();
-  imgUrl3 = await snapshot3.ref.getDownloadURL();
+    var firebaseStorageRef = FirebaseStorage.instance.ref().child("image@");
 
 
-  List<String> imageList = [imgUrl1, imgUrl2, imgUrl3];
+    var task1 = firebaseStorageRef.child("image54").putFile(_image1);
 
-  productServices.upLoadProduct(
-  productName: productnamecontroller.text,
-  price: double.parse(Pricecontroller.text),
-  sizes: selectedSize,
-  images: imageList,
-  quantity: int.parse(quantitycontroller.text),
-  );
-  _fromkey.currentState.reset();
-  setState(() {
-  isLoading = false;
-  });
-  Toast.show('product added', context);
-  Navigator.pop(context);
-  });
-  } else {
-  Toast.show('select sizes please', context);
-  setState(() {
-  isLoading = false;
-  });
-  }
-  }
-  } else {
-  Toast.show('all images must be inserted', context);
-  setState(() {
-  isLoading = false;
-  });
-  }
 
-  Future uploadFile() async {
-    setState(() {
-      isLoading = true;
+    var task2 = firebaseStorageRef.child("images").putFile(_image2);
+
+
+    var task3 = firebaseStorageRef.child("image").putFile(_image3);
+
+
+    List imageList = [imgColRef, imageUrl2, imageUrl3];
+
+    task1.whenComplete(() async {
+      print('file uploaded');
+      await firebaseStorageRef.getDownloadURL().then((fileURL) {
+        setState(() {
+          imageUrl1 = fileURL;
+        });
+      });
     });
-    firebase_storage.FirebaseStorage storage =
-        firebase_storage.FirebaseStorage.instance;
-    Future<void> downloadURL() async {
-      String downloadURL = await firebase_storage.FirebaseStorage.instance
-          .ref('users/123/avatar.jpg')
-          .getDownloadURL();
-      .child('images/${Path.basename(_image.path)}}');
-      // Within your widgets:
-      // Image.network(downloadURL);
-    }
-    .ref()
+    task2.whenComplete(() async {
+      print('file uploaded');
+      await firebaseStorageRef.getDownloadURL().then((fileURL) {
+        setState(() {
+          imageUrl2 = fileURL;
+        });
 
-    StorageUploadTask uploadTask = storageReference.putFile(_image);
-    await uploadTask.onComplete;
-    print('File Uploaded');
-    storageReference.getDownloadURL().then((fileURL) {
-    setState(() {
-    _uploadedFileURL = fileURL;
-    isLoading = false;
+      });
     });
+
+    task3.whenComplete(() async {
+      print('file uploaded');
+      await firebaseStorageRef.getDownloadURL().then((fileURL) {
+        setState(() {
+          imageUrl3 = fileURL;
+        });
+      }).whenComplete(() async {
+        await imgColRef.add({'url': imageUrl2});
+        print('link added to database');
+      });
     });
+
+
+    productServices.upLoadProduct(
+      productName: productnamecontroller.text,
+      price: double.parse(Pricecontroller.text),
+      quantity: selectedSize,
+      category:selectedType,
+      photo:photourls.text,
+      image: imageList,
+      Description: quantitycontroller.text,
+    );
   }
-
-
-}*/
 
 
 }

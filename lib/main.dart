@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
           fontWeight: FontWeight.bold
       ),
       text: [
-        "Breaking Code",
+        "Agro Kart",
 
       ],
       isRepeatingAnimation: true
@@ -47,3 +47,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+

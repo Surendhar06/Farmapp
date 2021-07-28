@@ -1,32 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:project/BuyNow.dart';
 import 'package:project/Custom_Action_bar.dart';
+import 'package:project/Main%20Page.dart';
 import 'package:project/imageswipe.dart';
-import 'package:badges/badges.dart';
 import 'package:project/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project/Quantity.dart';
 import 'package:project/firebaseservices.dart';
-import 'constants.dart';
-import 'package:project/productcard.dart';
-import 'package:flutter_search_bar/flutter_search_bar.dart';
-import 'firebaseservices.dart';
+import 'package:project/sell/firebase.dart';
+import 'package:project/sell/sellhome.dart';
+import 'package:project/sell/sellprofile.dart';
+import '../constants.dart';
 
+import '../firebaseservices.dart';
 
-class CerealsPage extends StatelessWidget {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final CollectionReference _userID = FirebaseFirestore.instance.collection(
-      "users");
-  final User _user = FirebaseAuth.instance.currentUser;
-  final CollectionReference _productRef = FirebaseFirestore.instance.collection("Cereals");
+class sellPage extends StatelessWidget {
+  Firebaseservices _firebaseservices = Firebaseservices();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.green,
-          title: Center(child: Text("Cereals Page",style:Constants.boldHeading)),
+          title: Center(child: Text("Sell Product & View",style:Constants.boldHeading)),
           actions: <Widget>[
             new IconButton(
                 icon: Icon(
@@ -36,50 +32,63 @@ class CerealsPage extends StatelessWidget {
                 onPressed: () {
 
                 }),
-            Container(
-              width: 42.0,
-              height: 42.0,
-              alignment: Alignment.center,
-
-              child: StreamBuilder(
-                stream: _userID.doc(_user.uid).collection("cart").snapshots(),
-                builder: (context, snapshot) {
-                  int _totalitem = 0;
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    List _documents = snapshot.data.docs;
-                    _totalitem = _documents.length;
-                  }
-
-                  return Badge(
-
-                    position: BadgePosition.topEnd(top: 0, end: 3),
-                    animationType: BadgeAnimationType.slide,
-                    badgeColor: Colors.red,
-                    badgeContent: Text("$_totalitem" ?? "0",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.shopping_cart,
-                        color: Colors.white,
-                      ),
-                      onPressed: (){
-
-                      },
-                    ),
-
-                  );
-
-                },
-              ),
-            ),
+           IconButton(onPressed: (){},
+               icon: Icon(Icons.notification_important))
           ]
       ),
+drawer: Drawer(
+  child: ListView(
+    children: [
+      InkWell(
+        onTap: (){ Navigator.push(context, MaterialPageRoute(
+          builder:(context)=> SellHome(),
+        )); },
 
+        child: ListTile(
+          title: Text('Home Page'),
+          leading: Icon(Icons.home),
+        ),
+      ),
+
+      InkWell(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(
+            builder:(context)=> FarmersProfile(),
+          ));
+        },
+        child: ListTile(
+          title: Text('Profile'),
+          leading: Icon(Icons.person),
+        ),
+      ),
+
+      InkWell(
+        onTap: (){Navigator.push(context, MaterialPageRoute(
+          builder:(context)=> MainPage(),
+        ));},
+        child: ListTile(
+          title: Text('Customer'),
+          leading: Icon(Icons.account_box_outlined),
+        ),
+      ),
+    ],
+  ),
+),
+      floatingActionButton: FloatingActionButton(
+        child: IconButton(
+          icon: Icon(Icons.add),
+          onPressed:(){
+          Navigator.push(context, MaterialPageRoute(
+            builder:(context)=> AddProduct(),
+          ));}
+        ),
+      ),
       body: Container(
         child: Stack(
           children: [
             FutureBuilder <QuerySnapshot>(
-                future: _productRef.get(),
+                future: _firebaseservices.userID.doc(_firebaseservices.getuserId())
+                    .collection("sell").get(),
                 builder:(context,snapshot){
                   if(snapshot.hasError){
                     return Scaffold(
@@ -98,7 +107,7 @@ class CerealsPage extends StatelessWidget {
                         return GestureDetector(
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(
-                              builder:(context)=> CerealsProduct(productId: document.id,),
+                              builder:(context)=> sellProduct(productId: document.id,),
                             ));
                           },
                           child: Container(
@@ -141,7 +150,6 @@ class CerealsPage extends StatelessWidget {
                                               color: Theme.of(context).accentColor,
                                               fontWeight: FontWeight.w600
                                           ),
-
                                         )
                                       ],
                                     ),
@@ -173,27 +181,19 @@ class CerealsPage extends StatelessWidget {
   }
 }
 
-class CerealsProduct extends StatefulWidget {
+class sellProduct extends StatefulWidget {
   final String productId;
-  CerealsProduct({this.productId});
+  sellProduct({this.productId});
   @override
-  _CerealsProductState createState() => _CerealsProductState();
+  _sellProductState createState() => _sellProductState();
 }
 
-class _CerealsProductState extends State<CerealsProduct> {
+class _sellProductState extends State<sellProduct> {
   Firebaseservices _firebaseservices = Firebaseservices();
 
 
   User _user = FirebaseAuth.instance.currentUser;
   String _selectedproduct = "0";
-
-  Future _addtocart(){
-    return _firebaseservices.userID.doc(_user.uid).collection("cart").doc(widget.productId).collection('Cereals').doc().set(
-        {
-          "Quantity":_selectedproduct
-        }
-    );
-  }
 
 
 
@@ -205,7 +205,7 @@ class _CerealsProductState extends State<CerealsProduct> {
       body: Stack(
         children: [
           FutureBuilder(
-              future: FirebaseFirestore.instance.collection("Cereals").doc(widget.productId).get(),
+              future: _firebaseservices.userID.doc(_firebaseservices.getuserId()).collection("sell").doc(widget.productId).get(),
               builder: (context, snapshot){
                 if(snapshot.hasError){
                   return Scaffold(
@@ -277,6 +277,19 @@ class _CerealsProductState extends State<CerealsProduct> {
                         ),
                       ),
                       Padding(
+                        padding: const EdgeInsets.only(
+                          top: 24.0,
+                          left: 24.0,
+                          right: 24.0,
+                          bottom: 4.0,
+
+                        ),
+                        child: Text(
+                          "\Category : ${documentData['category']}"??"Product Name",
+                          style: Constants.boldHeading,
+                        ),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.symmetric(
                           vertical: 8.0,
                           horizontal: 24.0,
@@ -288,72 +301,9 @@ class _CerealsProductState extends State<CerealsProduct> {
                       ),
                       quantity(
                         productquantity: productquantity,
-                        onSelected: (quantity){
-                          _selectedproduct = quantity;
-                        },
+
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Expanded(
 
-                              child: GestureDetector(
-                                onTap:(){
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder:(context)=> BuyNow(),
-                                  ));
-                                },
-
-                                child: Container(
-                                  height:65.0,
-                                  decoration:BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  alignment:Alignment.center,
-                                  child: Text("Buy",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-
-                              child: GestureDetector(
-                                onTap:()async {
-                                  await _addtocart();
-                                  Scaffold.of(context).showSnackBar(_snackBar);
-
-                                },
-                                child: Container(
-                                  height:65.0,
-                                  margin: EdgeInsets.only(
-                                    left: 16.0,
-                                  ),
-                                  decoration:BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text("Add to cart",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
 
                     ],
                   );

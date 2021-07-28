@@ -1,5 +1,6 @@
 import 'package:project/RoundedButton.dart';
 import 'package:project/register.dart';
+import 'package:project/selectionpage.dart';
 import 'Main Page.dart';
 import 'authentication.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,11 +40,19 @@ class _loginState extends State<login> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'E-mail',
+                  suffixIcon: TextButton(
+                    child: Text("Send OTP"),
+                    onPressed: (){
+
+                    },
+                  ),
                   errorText: _validate ? 'Value Can\'t Be Empty' : null,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
+
                 ),
+
                 onChanged: (value){
                   emailIn =value;
                 },
@@ -77,7 +86,7 @@ class _loginState extends State<login> {
   }
                else{
                  Navigator.push(context, MaterialPageRoute(
-                   builder:(context)=> MainPage(),
+                   builder:(context)=> SelectionType(),
                  ));
   }
                 },

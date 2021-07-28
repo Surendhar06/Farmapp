@@ -6,6 +6,7 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:project/pulsespage.dart';
 import 'package:project/AddProducts.dart';
 import 'package:project/f&vpage.dart';
+import 'package:project/sell/sellhome.dart';
 import 'Custom_Action_bar.dart';
 import 'PriceTable.dart';
 import 'horizontal_listview.dart';
@@ -85,14 +86,14 @@ class _MainPageState extends State<MainPage> {
           children: <Widget>[
 // header
             new UserAccountsDrawerHeader(
-              accountName: Text('SRY'),
-              accountEmail: Text('sry@gmail.com'),
+              accountName: Text('Name'),
+              accountEmail: Text('Email'),
               currentAccountPicture: GestureDetector(
 
                 child: new CircleAvatar(
                   radius: 140,
                   backgroundColor: Colors.green,
-                  child: Center(child: Text("  Breaking \n  Code",style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.bold),)),
+                  child: Center(child: Text("  Agro \n  Kart",style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.bold),)),
                 ),
               ),
               decoration: new BoxDecoration(
@@ -125,10 +126,10 @@ class _MainPageState extends State<MainPage> {
             ),
             InkWell(
               onTap: (){Navigator.push(context, MaterialPageRoute(
-                builder:(context)=> AddProduct(),
+                builder:(context)=> SellHome(),
               ));},
               child: ListTile(
-                title: Text('Add Products'),
+                title: Text('Sell'),
                 leading: Icon(Icons.add_box_outlined),
               ),
             ),
@@ -173,7 +174,7 @@ class _MainPageState extends State<MainPage> {
 
       body: new ListView(
         children: <Widget>[
-         cardname(),
+
           //image carousel begins here
         SizedBox(
         height: 200.0,
