@@ -11,4 +11,5 @@ class Constants {
   static const regularDarkText =
   TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: Colors.black);
 
+
 }
