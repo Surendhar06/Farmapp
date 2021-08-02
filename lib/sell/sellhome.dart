@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:project/sell/Sellproductview.dart';
 import 'package:project/sell/sellprofile.dart';
 
+import 'customer sponserdata.dart';
+import 'farmer apply loan.dart';
+
 class SellHome extends StatefulWidget {
   @override
   _SellHomeState createState() => _SellHomeState();
@@ -14,7 +17,7 @@ class _SellHomeState extends State<SellHome> {
   int _counter = 0;
   List pages = [
    sellPage(),
-    Getsponser(),
+    userloan(),
     FarmersProfile(),
   ];
 
@@ -59,40 +62,6 @@ class _SellHomeState extends State<SellHome> {
             textAlign: TextAlign.center,
           ),
         ],
-      ),
-    );
-  }
-}
-
-
-
-/// This is the stateless widget that the main application instantiates.
-class Getsponser extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        
-        child: TextButton(
-          onPressed: () => showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text('Sponser'),
-              content: const Text('This features Coming Soon'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context, 'Cancel'),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, 'OK'),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          ),
-          child: const Text('Click',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-        ),
       ),
     );
   }

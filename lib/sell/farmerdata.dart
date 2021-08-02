@@ -1,11 +1,13 @@
 import 'dart:io';
-import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path/path.dart';
 import 'package:project/RoundedButton.dart';
-import 'package:project/sell/sellhome.dart';
+import 'package:project/sell/maps.dart';
+
 
 class SellRegister extends StatefulWidget {
   const SellRegister({Key key}) : super(key: key);
@@ -116,7 +118,6 @@ class _SellRegisterState extends State<SellRegister> {
                                   height: 20.0,
                                 ),
                                 TextField(
-
                                   keyboardType: TextInputType.phone,
                                   onChanged: (value) {
                                     FarmersData.phNo = value;
@@ -197,10 +198,6 @@ class _SellRegisterState extends State<SellRegister> {
                                 SizedBox(
                                   height: 20.0,
                                 ),
-                                FlatButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                        "Click here to select the fields location"))
                               ],
                             ),
                           ]),
@@ -208,17 +205,15 @@ class _SellRegisterState extends State<SellRegister> {
                       ),
                     ),
                   ),
-                  Roundedbuttons(
-                      text: "Register",
-                      textcolor: Colors.white,
-                      colors: Colors.redAccent,
-
-                    onpressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder:(context)=> SellHome(),
-                      ));
-                    },),
-
+                  RoundedButtons(
+                      title: "Next",
+                      textcolour: Colors.white,
+                      colour: Colors.redAccent,
+                      onpressed: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder:(context)=> GMap(),
+                        ));
+                      })
                 ],
               ),
             ),
@@ -230,8 +225,11 @@ class _SellRegisterState extends State<SellRegister> {
 }
 
 
+
+
 class FarmersData {
   static String name;
+  static LatLng latLong;
   static String phNo;
   static double age;
   static double experience;
@@ -239,8 +237,6 @@ class FarmersData {
   static String Bio;
   static String landType;
   static Path profilePic;
-
-
 
 // FarmersProfile(
 //     {@required this.landType,

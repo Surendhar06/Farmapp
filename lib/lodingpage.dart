@@ -4,12 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-
 import 'package:project/selectionpage.dart';
 
-import 'package:project/sell/storage.dart';
-import 'package:project/sell/t2.dart';
-import 'package:project/sell/test.dart';
+
 
 import 'constants.dart';
 
@@ -53,7 +50,7 @@ class Landingpage extends StatelessWidget {
                 if(_user == null){
                   return login();
                 }else{
-                  return Adds();
+                  return SelectionType();
                 }
               }
                //checking the auth_state

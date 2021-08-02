@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
-import 'package:project/pulsespage.dart';
-import 'package:project/AddProducts.dart';
-import 'package:project/f&vpage.dart';
+import 'package:project/admin%20product.dart';
+
+import 'package:project/selectionpage.dart';
+import 'package:project/sell/customer%20sponserdata.dart';
 import 'package:project/sell/sellhome.dart';
+
 import 'Custom_Action_bar.dart';
 import 'PriceTable.dart';
 import 'horizontal_listview.dart';
@@ -86,8 +88,8 @@ class _MainPageState extends State<MainPage> {
           children: <Widget>[
 // header
             new UserAccountsDrawerHeader(
-              accountName: Text('Name'),
-              accountEmail: Text('Email'),
+              accountName: Text('Agro Kart'),
+              accountEmail: Text('Email@gmail.com'),
               currentAccountPicture: GestureDetector(
 
                 child: new CircleAvatar(
@@ -126,11 +128,20 @@ class _MainPageState extends State<MainPage> {
             ),
             InkWell(
               onTap: (){Navigator.push(context, MaterialPageRoute(
-                builder:(context)=> SellHome(),
+                builder:(context)=> SelectionType(),
               ));},
               child: ListTile(
                 title: Text('Sell'),
                 leading: Icon(Icons.add_box_outlined),
+              ),
+            ),
+            InkWell(
+              onTap: (){Navigator.push(context, MaterialPageRoute(
+                builder:(context)=> viewloan(),
+              ));},
+              child: ListTile(
+                title: Text('Sponser'),
+                leading: Icon(Icons.attach_money),
               ),
             ),
             InkWell(

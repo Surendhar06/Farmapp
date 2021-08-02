@@ -305,7 +305,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             color: Colors.green
                         ),
-                        child: Icon(Icons.edit,color: Colors.white,),
+                        child: Icon(Icons.edit,
+
+                          color: Colors.white,),
+
                       ),)
                   ],
                 ),

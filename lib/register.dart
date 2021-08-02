@@ -1,9 +1,16 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:project/Main%20Page.dart';
+import 'package:project/RoundedButton.dart';
+import 'package:project/admin%20product.dart';
+import 'package:project/authentication.dart';
 import 'package:project/selectionpage.dart';
-import 'RoundedButton.dart';
-import 'admin product.dart';
-import 'authentication.dart';
+import 'package:path/path.dart' as Path;
 import 'package:flutter/material.dart';
 
 enum MobileVerificationState {
@@ -18,12 +25,21 @@ class registerpage extends StatefulWidget {
 
 class _registerpageState extends State<registerpage> {
 
+  File _image;
+
+  String _uploadFileURL;
+
+
+
+
+
   MobileVerificationState currentState =
       MobileVerificationState.SHOW_MOBILE_FORM_STATE;
 
   final phoneController = TextEditingController();
   final otpController = TextEditingController();
-
+  final city = TextEditingController();
+  final location = TextEditingController();
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   String verificationId;
@@ -53,12 +69,13 @@ class _registerpageState extends State<registerpage> {
         showLoading = false;
       });
 
-       _scaffoldKey.currentState
+      _scaffoldKey.currentState
           .showSnackBar(SnackBar(content: Text(e.message)));
     }
   }
 
   registration productServices = registration();
+  userreg userServices = userreg();
   final Name = TextEditingController();
   final Email = TextEditingController();
   final password = TextEditingController();
@@ -81,6 +98,8 @@ class _registerpageState extends State<registerpage> {
   final _auths = authentication();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final SnackBar _snackBar = SnackBar(content: Text("Otp Verified Successfully"),);
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,9 +114,72 @@ class _registerpageState extends State<registerpage> {
             textAlign: TextAlign.center,
           ),
           SizedBox(
-            height: 130.0,
+            height: 50.0,
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: CircleAvatar(
+                  radius: 100,
+                  backgroundColor: Color(0xff476cfb),
+                  child: ClipOval(
+                    child: new SizedBox(
+                      width: 180.0,
+                      height: 180.0,
+                      child: (_image!=null)?Image.file(
+                        _image,
+                        fit: BoxFit.fill,
+                      ):Image.network(
+                        "https://firebasestorage.googleapis.com/v0/b/deptcs-1dca6.appspot.com/o/logo.jpeg?alt=media&token=ec37fcd2-5ecf-49fd-a057-20357c7e37b6",
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 60.0),
+                child: IconButton(
+                  icon: Icon(
+                    FontAwesomeIcons.camera,
+                    size: 30.0,
+                  ),
+                  onPressed: () {
+                    getImage().whenComplete(() => showDialog(
+                        context: context,
+                        builder:(cmt)=> AlertDialog(
+                          title: Text('Confirm Upload ?'),
+                          content: Container(
+                            height: MediaQuery.of(context).size.height / 3,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage(_image.path), fit: BoxFit.cover)),
+                          ),
+                          actions: [
+                            FlatButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel')),
+                            FlatButton(
+                                onPressed: () {
 
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Confirm'))
+                          ],
+                        )));
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
           TextField(
 
             keyboardType: TextInputType.name,
@@ -150,10 +232,46 @@ class _registerpageState extends State<registerpage> {
               passwordup = value;
             },
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20.0,
+          ),
           TextField(
 
-          //  keyboardType: TextInputType.number,
+            keyboardType: TextInputType.emailAddress,
+            controller: city,
+            decoration: InputDecoration(
+              labelText: 'City',
+              errorText: _validate ? 'Value Can\'t Be Empty' : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+            ),
+
+          ),
+
+          SizedBox(
+            height: 20.0,
+          ),
+          TextField(
+
+            keyboardType: TextInputType.emailAddress,
+            controller: location,
+            decoration: InputDecoration(
+              labelText: 'Location',
+              errorText: _validate ? 'Value Can\'t Be Empty' : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+            ),
+          ),
+
+          SizedBox(
+            height: 20.0,
+          ),
+
+          TextField(
+
+            //  keyboardType: TextInputType.number,
 
             controller: phoneController,
             decoration: InputDecoration(
@@ -174,29 +292,29 @@ class _registerpageState extends State<registerpage> {
                   });
 
                   await _auth.verifyPhoneNumber(
-                    phoneNumber: phoneController.text,
-                    verificationCompleted: (phoneAuthCredential) async {
+                      phoneNumber: phoneController.text,
+                      verificationCompleted: (phoneAuthCredential) async {
 
-                      setState(() {
-                        showLoading = false;
-                      });
-                      //signInWithPhoneAuthCredential(phoneAuthCredential);
-                    },
-                    verificationFailed: (verificationFailed) async {
-                      setState(() {
-                        showLoading = false;
-                      });
+                        setState(() {
+                          showLoading = false;
+                        });
+                        //signInWithPhoneAuthCredential(phoneAuthCredential);
+                      },
+                      verificationFailed: (verificationFailed) async {
+                        setState(() {
+                          showLoading = false;
+                        });
                         _scaffoldKey.currentState.showSnackBar(
-                          SnackBar(content: Text(verificationFailed.message)));
-                    },
-                    codeSent: (verificationId, resendingToken) async {
-                      setState(() {
+                            SnackBar(content: Text(verificationFailed.message)));
+                      },
+                      codeSent: (verificationId, resendingToken) async {
+                        setState(() {
 
-                        showLoading = false;
-                        currentState = MobileVerificationState.SHOW_OTP_FORM_STATE;
-                        this.verificationId = verificationId;
-                      });
-                    },
+                          showLoading = false;
+                          currentState = MobileVerificationState.SHOW_OTP_FORM_STATE;
+                          this.verificationId = verificationId;
+                        });
+                      },
                       codeAutoRetrievalTimeout: (String verificationId) {
                         setState(() {
                           this.verificationId = verificationId;
@@ -225,13 +343,13 @@ class _registerpageState extends State<registerpage> {
               labelText: 'OTP',
               suffixIcon: TextButton(
                 child: Text("verify"),
-                  onPressed: ()async {
-                    PhoneAuthCredential phoneAuthCredential =
-                    PhoneAuthProvider.credential(
-                        verificationId: verificationId, smsCode: otpController.text);
+                onPressed: ()async {
+                  PhoneAuthCredential phoneAuthCredential =
+                  PhoneAuthProvider.credential(
+                      verificationId: verificationId, smsCode: otpController.text);
 
-                    signInWithPhoneAuthCredential(phoneAuthCredential);
-                  },
+                  signInWithPhoneAuthCredential(phoneAuthCredential);
+                },
               ),
 
               errorText: _validate ? 'Value Can\'t Be Empty' : null,
@@ -255,15 +373,8 @@ class _registerpageState extends State<registerpage> {
                   verificationId: verificationId, smsCode: otpController.text);
 
               signInWithPhoneAuthCredential(phoneAuthCredential);
+              uploadFile();
 
-              productServices.upLoadProduct(
-                Name: Name.text,
-
-                Email: Email.text,
-                password:password.text,
-                mbl: phoneController.text,
-
-              );
 
               dynamic result = await _auths.Signup(emailUp, passwordup);
               if(result == null){
@@ -292,4 +403,59 @@ class _registerpageState extends State<registerpage> {
       ),
     );
   }
+
+
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+      print('Image Path $_image');
+    });
+  }
+  Future uploadFile() async {
+    var firebaseStorageRef = FirebaseStorage.instance.ref().child(
+        'profile${Path.basename(_image.path)}');
+    var task = firebaseStorageRef.putFile(_image);
+
+
+    task.whenComplete(() async {
+      print('file uploaded');
+      String downloadURL = await firebaseStorageRef.getDownloadURL();
+      await setState(() {
+        print(downloadURL);
+
+        productServices.upLoadProduct(
+          Name: Name.text,
+
+          Email: Email.text,
+          password:password.text,
+          mbl: phoneController.text,
+          city:city.text,
+          location:location.text,
+          image:downloadURL,
+        );
+        userServices.upLoadProduct(
+          Name: Name.text,
+
+          Email: Email.text,
+          password:password.text,
+          mbl: phoneController.text,
+          city:city.text,
+          location:location.text,
+          image:downloadURL,
+
+        );
+
+      });
+
+
+
+    });
+
+
+
+  }
 }
+
+

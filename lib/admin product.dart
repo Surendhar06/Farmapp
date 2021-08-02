@@ -17,7 +17,7 @@ class ProductServices {
 List image,
         String category,
         String Description,
-        String photo,
+        String location,
         List quantity,
         double price,
       }) async {
@@ -31,7 +31,8 @@ List image,
       'Price':price,
       'Quantity':quantity,
       'Description':Description,
-      'image':image,
+      await 'image':image,
+      'location':location
 
     });
   }
@@ -46,8 +47,10 @@ class registration {
       {String Email,
         String Name,
         String password,
-
+        String location,
+        String city,
         String mbl,
+        String image,
       }) async {
     var id = new Uuid();
 
@@ -58,7 +61,42 @@ class registration {
       'id': productId,
       'Mbl No:':mbl,
       'Email':Email,
-      'Password':password
+      await 'image':image,
+      'Password':password,
+'city':city,
+   'location':location,
+
+    });
+  }
+}
+
+
+class userreg {
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final User _user = FirebaseAuth.instance.currentUser;
+  Future<void> upLoadProduct(
+      {String Email,
+        String Name,
+        String password,
+String location,
+        String city,
+        String mbl,
+        String image,
+      }) async {
+    var id = new Uuid();
+
+    String productId = id.v1();
+    _firestore.collection("users").document(_user.uid).collection("Register").doc(productId).set({
+
+      'Name': Name,
+      await 'image':image,
+      'id': productId,
+      'Mbl No:':mbl,
+      'Email':Email,
+      'Password':password,
+      'city':city,
+      'location':location,
 
 
     });
@@ -105,9 +143,10 @@ class sellServices {
 
         String category,
         String Description,
-        String photo,
+        List image,
         List quantity,
         double price,
+        String location,
       }) async {
     var id = new Uuid();
 
@@ -119,7 +158,129 @@ class sellServices {
       'Price':price,
       'Quantity':quantity,
       'Description':Description,
-      'image':photo,
+
+      await 'image':image,
+      'location':location
+
+    });
+  }
+}
+
+
+
+
+class loan {
+
+  // String ref = "productName";
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> upLoadProduct(
+      {String username,
+        String images,
+        String address,
+        String mbl,
+        String amount,
+        String location,
+        String date,
+        String exp,
+        String repay,
+        String acres,
+        String age,
+        String hname,
+        String hdate,
+        String hperiod,
+        String nsowing,
+        String hnext,
+        String nsdate,
+        String nsperiod,
+
+
+      }) async {
+    var id = new Uuid();
+
+    String productId = id.v1();
+    _firestore.collection("loan").doc(productId).set({
+
+      'Name': username,
+      'id': productId,
+      'Amount':amount,
+      'mbl':mbl,
+      'Address':address,
+     await 'image':images,
+      'location':location,
+      'date':date,
+      'exp':exp,
+      'repay':repay,
+      'acres':acres,
+      'age':age,
+      'hname':hname,
+      'hdate':hdate,
+      'hperiod':hperiod,
+      'hnext':hnext,
+      'nsowing':nsowing,
+      'nsdate':nsdate,
+      'nsperiod':nsperiod,
+
+
+    });
+  }
+}
+
+
+class loanuser {
+
+  // String ref = "productName";
+  final User _user = FirebaseAuth.instance.currentUser;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> upLoadProduct(
+      {String username,
+        String images,
+        String address,
+        String mbl,
+        String amount,
+        String location,
+        String date,
+        String exp,
+        String repay,
+        String acres,
+        String age,
+        String hname,
+        String hdate,
+        String hperiod,
+        String nsowing,
+        String hnext,
+        String nsdate,
+        String nsperiod,
+
+
+
+      }) async {
+    var id = new Uuid();
+
+    String productId = id.v1();
+    _firestore.collection("users").document(_user.uid).collection("loan").doc(productId).set({
+
+      'Name': username,
+      'id': productId,
+      'Amount':amount,
+      'mbl':mbl,
+      'Address':address,
+      await 'image':images,
+      'location':location,
+      'date':date,
+      'exp':exp,
+      'repay':repay,
+      'acres':acres,
+      'age':age,
+      'hname':hname,
+      'hdate':hdate,
+      'hperiod':hperiod,
+      'hnext':hnext,
+      'nsowing':nsowing,
+      'nsdate':nsdate,
+      'nsperiod':nsperiod,
 
     });
   }

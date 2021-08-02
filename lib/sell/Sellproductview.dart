@@ -7,7 +7,7 @@ import 'package:project/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project/Quantity.dart';
 import 'package:project/firebaseservices.dart';
-import 'package:project/sell/firebase.dart';
+import 'package:project/sell/Addproducts.dart';
 import 'package:project/sell/sellhome.dart';
 import 'package:project/sell/sellprofile.dart';
 import '../constants.dart';
@@ -79,7 +79,7 @@ drawer: Drawer(
           icon: Icon(Icons.add),
           onPressed:(){
           Navigator.push(context, MaterialPageRoute(
-            builder:(context)=> AddProduct(),
+            builder:(context)=> AddProducts(),
           ));}
         ),
       ),
