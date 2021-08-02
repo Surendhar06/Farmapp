@@ -403,18 +403,28 @@ class _LoanviewState extends State<Loanview> {
                 child: Divider(color: Colors.black54),
                 height: 10.0,
                 ),
-                Text(
-                "Location",
-                style: TextStyle(
-                color: Colors.black,
-                fontStyle: FontStyle.normal,
-                fontSize: 28.0),
-                ),
-                Container(
-                height: 400.0,
-                width: 400.0,
-                child: DisplayMap(),
-                )
+                  Text(
+                    "Location",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 28.0),
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Text(
+                    "${documentData['location']}",
+                    style: TextStyle(
+                      fontSize: 22.0,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.black,
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+
+
                 ],
                 ),
                 ),
