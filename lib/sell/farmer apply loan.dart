@@ -31,7 +31,7 @@ class _userloanState extends State<userloan> {
             color: Colors.green,
           ),
           onPressed: (){
-            Navigator.of(context).pop();
+          
           },
         ),
 
